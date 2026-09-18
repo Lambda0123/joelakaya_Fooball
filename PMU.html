@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PMU Tracker — JOELAKAYA</title>
+<meta name="description" content="Tableau de suivi PMU : pronostics, compte à rebours et résultats.">
+<style>
+:root{--bg:#100c08;--panel:#1b130d;--panel2:#241a12;--gold:#f2c14e;--green:#2bc277;--red:#e85b52;--text:#fff7e8;--muted:#b9a991;--line:#4b3724}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#49321b 0,#100c08 45%);color:var(--text);font-family:Arial,system-ui,sans-serif}.wrap{max-width:1180px;margin:auto;padding:18px}
+header{text-align:center;padding:12px 0 18px}header h1{margin:0;font-size:clamp(30px,6vw,60px);letter-spacing:2px;color:var(--gold);text-shadow:0 2px 16px #000}header p{color:var(--muted);margin:8px 0}.brand{font-weight:900;color:#fff}
+.hero{background:linear-gradient(135deg,#2d1c0d,#171009);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 18px 50px #0008}.hero h2{margin:0 0 8px;font-size:28px}.hero .course{font-size:18px;font-weight:800}.hero .meta{color:var(--muted);margin-top:6px}.count{margin-top:18px;font-size:clamp(28px,6vw,48px);font-weight:900;color:var(--gold);text-align:center}.small{text-align:center;color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:1.35fr .65fr;gap:16px;margin-top:16px}.panel{background:rgba(27,19,13,.96);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}.panel h3{margin:0 0 5px}.hint{font-size:12px;color:var(--muted);margin-bottom:14px}
+.notice{padding:12px;border-radius:12px;background:#3a2815;border:1px solid #604621;color:#ead9b7;font-size:13px;margin-bottom:14px}
+.source{font-size:11px;color:#8e806d;margin-top:12px}.picks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.pick{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:13px}.pick b{display:block;color:var(--gold);margin-bottom:6px}.nums{font-size:20px;font-weight:900;letter-spacing:1px}.label{font-size:11px;color:var(--muted);margin-top:5px}
+.games{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.game{padding:13px;background:#171009;border:1px solid var(--line);border-radius:13px}.game b{color:var(--gold)}.game span{display:block;color:var(--muted);font-size:12px;margin-top:5px}
+.result{background:#0e1711;border-color:#27583f}.result .arrival{font-size:26px;font-weight:900;color:var(--green);letter-spacing:2px}.pending{color:var(--gold);font-weight:800}
+a{color:var(--gold)}footer{text-align:center;padding:15px;color:#887966;font-size:11px}footer strong{color:var(--gold)}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.picks{grid-template-columns:1fr 1fr}.games{grid-template-columns:1fr}}@media(max-width:500px){.picks{grid-template-columns:1fr}}
+</style></head>
+<body><div class="wrap">
+<header><h1>JOELAKAYA</h1><p>PAGE PMU — PRONOSTICS • COURSES • RÉSULTATS</p></header>
+
+<section class="hero">
+<h2>🏇 Quinté+ — samedi 19 septembre 2026</h2>
+<div class="course">R1C4 · Prix du Cabinet des Livres · Chantilly · 15:15</div>
+<div class="meta">Plat · 1 200 m · 16 partants · ligne droite · terrain annoncé bon souple</div>
+<div class="small" style="margin-top:15px">COMPTE À REBOURS AVANT LE DÉPART</div>
+<div id="count" class="count">--:--:--:--</div>
+<div class="small">Heure affichée selon l'horloge de votre ordinateur (France métropolitaine).</div>
+</section>
+
+<div class="grid"><main>
+<section class="panel"><h3>🔎 Synthèse des pronostics publics</h3>
+<div class="hint">Sélection construite à partir des informations actuellement publiées, notamment Canalturf et la presse hippique.</div>
+<div class="notice"><b>Important :</b> aucun pronostic ne peut garantir un gain. Les combinaisons ci-dessous sont des <b>sélections indicatives</b>, pas des « paris gagnants certains ». Elles seront confrontées au résultat après la course.</div>
+<div class="games">
+<div class="game"><b>13 HEROISTE</b><span>Base citée par Canalturf</span></div>
+<div class="game"><b>12 SCHUMAN</b><span>Base citée par Canalturf</span></div>
+<div class="game"><b>14 MIKEY</b><span>Chance régulière / coup de cœur</span></div>
+<div class="game"><b>4 GRAND SCOOP</b><span>Chance régulière</span></div>
+<div class="game"><b>10 FOU FURIEUX</b><span>Chance régulière</span></div>
+<div class="game"><b>2 PROFUMO DI IENA</b><span>Outsider cité</span></div>
+</div>
+<div class="source">Source principale : Canalturf, pronostic publié le 18/09/2026.</div>
+</section>
+
+<section class="panel"><h3>🎯 3 propositions — par type de jeu</h3><div class="hint">Classement des propositions : lecture pratique, sans garantie de résultat.</div>
+<div id="picks"></div></section>
+
+<section class="panel result"><h3>🏁 Résultat de la course</h3><div class="hint">Le résultat est à vérifier après l'arrivée.</div>
+<div id="result"><span class="pending">⏳ Course non courue — résultat en attente.</span></div>
+<div class="source">Après la course, utilisez le bouton « Vérifier les résultats » ci-dessous pour ouvrir la page de résultats.</div>
+</section>
+</main>
+
+<aside>
+<section class="panel"><h3>🕒 Quand regarder ?</h3><div class="hint">Prochaine course suivie</div>
+<div class="game"><b>Départ : 15:15</b><span>Samedi 19 septembre 2026<br>Chantilly — R1C4</span></div>
+<p><a href="https://www.pmu.fr/turf/" target="_blank" rel="noopener">Ouvrir PMU Turf ↗</a></p>
+<p><a href="https://www.canalturf.com/resultats-PMU/" target="_blank" rel="noopener">Voir les résultats Canalturf ↗</a></p>
+</section>
+<section class="panel"><h3>📊 Nos 3 grilles</h3>
+<div class="game"><b>Prudente</b><span>13 · 12 · 14 · 4 · 10</span></div><br>
+<div class="game"><b>Mixte</b><span>13 · 14 · 4 · 2 · 7</span></div><br>
+<div class="game"><b>Outsiders</b><span>12 · 14 · 10 · 7 · 8</span></div>
+</section>
+<section class="panel"><h3>⚠️ Suivi des résultats</h3><div class="hint">La page conserve les combinaisons affichées pour permettre une comparaison avec l'arrivée. Elle ne peut pas déterminer un gain officiel sans les rapports PMU.</div>
+</section>
+</aside></div>
+<footer><strong>JOELAKAYA</strong> · Page personnelle de suivi PMU · Jouer comporte des risques : endettement, dépendance, isolement. 18+</footer>
+</div>
+
+<script>
+const race=new Date("2026-09-19T15:15:00+02:00");
+const sets={
+"Simple gagnant / placé":[["13"],["14"],["12"]],
+"Couplé":[["13-12"],["13-14"],["12-14"]],
+"2 sur 4":[["13-12-14-4"],["13-14-10-2"],["12-14-4-7"]],
+"Tiercé":[["13-12-14"],["13-14-4"],["12-14-10"]],
+"Quarté+":[["13-12-14-4"],["13-14-4-10"],["12-14-10-2"]],
+"Quinté+":[["13-12-14-4-10"],["13-14-4-2-7"],["12-14-10-7-8"]],
+"Multi":[["13-12-14-4-10-2-7-8"],["13-14-4-10-2-7"],["12-14-10-7-8-4-2"]]
+};
+document.getElementById("picks").innerHTML=Object.entries(sets).map(([k,v])=>`<div class="panel" style="padding:14px;margin:10px 0;background:#140e09"><b>${k}</b><div class="picks">${v.map((x,i)=>`<div class="pick"><b>Proposition ${i+1}</b><div class="nums">${x}</div><div class="label">sélection indicative</div></div>`).join("")}</div></div>`).join("");
+function tick(){let ms=race-new Date(),e=document.getElementById("count");if(ms<=0){e.textContent="DÉPART / COURSE TERMINÉE";return}let s=Math.floor(ms/1000),d=Math.floor(s/86400);s%=86400;let h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);s%=60;e.textContent=`${String(d).padStart(2,"0")}j ${String(h).padStart(2,"0")}h ${String(m).padStart(2,"0")}m ${String(s).padStart(2,"0")}s`}tick();setInterval(tick,1000);
+</script></body></html>
