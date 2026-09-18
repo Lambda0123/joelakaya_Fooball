@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foot Tracker — Gabon 🇬🇦</title>
+<meta name="description" content="Calendrier football : Gabon, qualifications CAF, Ligue des Champions, Coupe du Monde et grandes équipes.">
+<style>
+:root{
+  --bg:#07110d;--panel:#0d1b15;--panel2:#11251c;--text:#f4f8f5;--muted:#9fb1a6;
+  --accent:#20d47b;--accent2:#f4c542;--danger:#ff6b6b;--line:#20372b;--shadow:0 18px 50px rgba(0,0,0,.28)
+}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at top,#123524 0,#07110d 38%,#050a08 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+a{color:inherit}.wrap{max-width:1200px;margin:auto;padding:22px}
+.hero{padding:26px 0 18px}.brand{display:flex;align-items:center;gap:12px}.flag{font-size:38px}.brand h1{margin:0;font-size:clamp(28px,5vw,48px);letter-spacing:-1.5px}.sub{color:var(--muted);margin:8px 0 0;font-size:15px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0}.btn,.select{background:var(--panel);border:1px solid var(--line);color:var(--text);padding:11px 14px;border-radius:12px;cursor:pointer}.btn:hover{border-color:var(--accent)}.btn.active{background:var(--accent);color:#041109;border-color:var(--accent);font-weight:800}
+.status{margin:10px 0 20px;color:var(--muted);font-size:13px}.status strong{color:var(--accent)}
+.grid{display:grid;grid-template-columns:1.35fr .65fr;gap:18px}@media(max-width:850px){.grid{grid-template-columns:1fr}}
+.panel{background:linear-gradient(180deg,rgba(17,37,28,.96),rgba(10,24,18,.96));border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}.panel-head{padding:18px 18px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center}.panel-head h2{font-size:18px;margin:0}.pill{font-size:11px;border:1px solid #2e4d3b;border-radius:999px;padding:6px 9px;color:var(--muted)}
+.matches{padding:10px}.day{color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:13px 8px 6px}.match{display:grid;grid-template-columns:88px 1fr 70px;align-items:center;gap:12px;padding:14px 10px;border-bottom:1px solid rgba(255,255,255,.05)}.match:last-child{border-bottom:0}.time{text-align:center;font-weight:800;font-size:14px}.comp{display:block;color:var(--muted);font-size:11px;font-weight:600;margin-top:4px}.teams{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:750}.vs{color:var(--muted);font-weight:500}.badge{justify-self:end;font-size:10px;padding:6px 8px;border-radius:8px;background:#183325;color:#aeecc9}.badge.live{background:#572020;color:#ffd0d0}.badge.done{background:#26332c;color:#aebbb3}
+.team-list{padding:12px}.team{display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:rgba(255,255,255,.02)}.team b{font-size:14px}.star{color:var(--accent2)}
+.empty{padding:24px;color:var(--muted);line-height:1.6}.notice{padding:14px 16px;background:#15291f;border-top:1px solid var(--line);font-size:12px;color:#bdd0c4}.gabon{border-color:#2d7a53}.gabon .panel-head{background:linear-gradient(90deg,rgba(32,212,123,.14),transparent)}
+.footer{padding:25px 0;color:#718178;font-size:12px;line-height:1.6}.source{color:#8ea99b}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid #355143;border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px}@keyframes spin{to{transform:rotate(360deg)}}
+.search{width:100%;background:var(--panel);border:1px solid var(--line);color:white;padding:12px;border-radius:12px;margin:10px 0 0;outline:none}.search:focus{border-color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="brand"><div class="flag">🇬🇦</div><div><h1>Foot Tracker</h1><p class="sub">Gabon • CAF • Champions League • Coupe du Monde • Grandes équipes</p></div></div>
+    <div class="toolbar">
+      <button class="btn active" data-filter="all">Tous</button>
+      <button class="btn" data-filter="gabon">🇬🇦 Gabon</button>
+      <button class="btn" data-filter="ucl">🏆 Champions League</button>
+      <button class="btn" data-filter="caf">🌍 Qualifications CAF</button>
+      <button class="btn" data-filter="favorites">⭐ Grandes équipes</button>
+      <button class="btn" id="refresh">↻ Actualiser</button>
+    </div>
+    <input id="search" class="search" placeholder="Rechercher une équipe (ex. Gabon, Real Madrid, PSG, Liverpool...)">
+    <div class="status" id="status"><span class="spinner"></span> Chargement des prochains matchs…</div>
+  </header>
+
+  <main class="grid">
+    <section class="panel gabon">
+      <div class="panel-head"><h2>🇬🇦 Gabon — prochains matchs</h2><span class="pill">Priorité</span></div>
+      <div id="gabonMatches" class="matches"><div class="empty">Chargement…</div></div>
+      <div class="notice">Les horaires sont affichés dans l'heure locale du navigateur. Les données sont récupérées automatiquement depuis l'API publique ESPN.</div>
+    </section>
+
+    <aside class="panel">
+      <div class="panel-head"><h2>⭐ Grandes équipes</h2><span class="pill">Surveillance</span></div>
+      <div id="favorites" class="team-list"></div>
+    </aside>
+
+    <section class="panel">
+      <div class="panel-head"><h2>🏆 Champions League</h2><span class="pill">UEFA</span></div>
+      <div id="uclMatches" class="matches"><div class="empty">Chargement…</div></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>🌍 Qualifications CAF</h2><span class="pill">AFCON</span></div>
+      <div id="cafMatches" class="matches"><div class="empty">Chargement…</div></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>🌐 Coupe du Monde</h2><span class="pill">FIFA</span></div>
+      <div id="wcMatches" class="matches"><div class="empty">Chargement…</div></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>📅 Grandes équipes — calendrier</h2><span class="pill">14 jours</span></div>
+      <div id="favMatches" class="matches"><div class="empty">Chargement…</div></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <b>Foot Tracker — version 1.0</b><br>
+    Cette page est conçue pour être publiée sur GitHub Pages et fonctionner sans serveur. Les données sportives sont chargées côté navigateur.
+    <br><span class="source">Source de données : ESPN public API. Les horaires et calendriers peuvent être modifiés par les organisateurs.</span>
+  </footer>
+</div>
+
+<script>
+const API='https://site.api.espn.com/apis/site/v2/sports/soccer/';
+const days=14;
+const leagues={
+  ucl:'uefa.champions',
+  caf:'caf.nations_qual',
+  wc:'fifa.world',
+  epl:'eng.1',
+  liga:'esp.1',
+  bundes:'ger.1',
+  seriea:'ita.1',
+  ligue1:'fra.1'
+};
+const favoriteNames=[
+  'Paris Saint-Germain','Real Madrid','Barcelona','Bayern Munich','Liverpool',
+  'Manchester City','Manchester United','Arsenal','Inter Milan','AC Milan',
+  'Juventus','Olympique de Marseille','Chelsea','Borussia Dortmund'
+];
+let data={ucl:[],caf:[],wc:[],favorites:[],gabon:[]};
+let activeFilter='all';
+
+function dateRange(){
+  const now=new Date(), end=new Date(now.getTime()+days*86400000);
+  const f=d=>d.toISOString().slice(0,10).replaceAll('-','');
+  return `${f(now)}-${f(end)}`;
+}
+function fmtDate(iso){
+  return new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'2-digit',month:'long'}).format(new Date(iso));
+}
+function fmtTime(iso){
+  return new Intl.DateTimeFormat('fr-FR',{hour:'2-digit',minute:'2-digit'}).format(new Date(iso));
+}
+function normalizeEvent(e, comp){
+  const c=e.competitions?.[0]||{};
+  const teams=(c.competitors||[]).map(x=>({name:x.team?.displayName||x.team?.name||'Équipe',score:x.score||'',home:x.homeAway}));
+  const home=teams.find(t=>t.home)||teams[0], away=teams.find(t=>!t.home)||teams[1];
+  return {
+    id:e.id, date:e.date, comp, home:home?.name||'—', away:away?.name||'—',
+    status:e.status?.type?.name||'STATUS_SCHEDULED',
+    state:e.status?.type?.state||'pre', detail:e.status?.type?.shortDetail||'À venir'
+  };
+}
+async function fetchLeague(slug, comp){
+  const url=`${API}${slug}/scoreboard?limit=200&dates=${dateRange()}`;
+  const r=await fetch(url); if(!r.ok) throw new Error(slug);
+  const j=await r.json();
+  return (j.events||[]).map(e=>normalizeEvent(e,comp));
+}
+function isGabon(m){return /gabon/i.test(m.home+' '+m.away)}
+function isFavorite(m){return favoriteNames.some(n=>m.home.toLowerCase().includes(n.toLowerCase())||m.away.toLowerCase().includes(n.toLowerCase()))}
+
+function render(list, target, limit=40){
+  const el=document.getElementById(target);
+  if(!list.length){el.innerHTML='<div class="empty">Aucun match trouvé dans la période chargée.</div>';return;}
+  const sorted=[...list].sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,limit);
+  let html='', last='';
+  for(const m of sorted){
+    const day=fmtDate(m.date);
+    if(day!==last){html+=`<div class="day">${day}</div>`;last=day}
+    const badge=m.state==='in'?'LIVE':m.state==='post'?'TERMINÉ':m.detail;
+    const cls=m.state==='in'?'live':m.state==='post'?'done':'';
+    html+=`<div class="match">
+      <div class="time">${fmtTime(m.date)}<span class="comp">${m.comp}</span></div>
+      <div class="teams">${m.home}<span class="vs">vs</span>${m.away}</div>
+      <div class="badge ${cls}">${badge}</div>
+    </div>`;
+  }
+  el.innerHTML=html;
+}
+
+function applyFilter(){
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  const matchQ=m=>!q||(m.home+' '+m.away+' '+m.comp).toLowerCase().includes(q);
+  let gab=data.gabon.filter(matchQ), ucl=data.ucl.filter(matchQ), caf=data.caf.filter(matchQ), wc=data.wc.filter(matchQ), fav=data.favorites.filter(matchQ);
+  if(activeFilter==='gabon'){ucl=[];caf=[];wc=[];fav=[]}
+  if(activeFilter==='ucl'){gab=[];caf=[];wc=[];fav=[]}
+  if(activeFilter==='caf'){gab=[];ucl=[];wc=[];fav=[]}
+  if(activeFilter==='favorites'){gab=[];ucl=[];caf=[];wc=[]}
+  render(gab,'gabonMatches',20);render(ucl,'uclMatches',30);render(caf,'cafMatches',30);render(wc,'wcMatches',30);render(fav,'favMatches',40);
+}
+
+async function load(){
+  const status=document.getElementById('status');
+  status.innerHTML='<span class="spinner"></span> Mise à jour des calendriers…';
+  const r=await Promise.allSettled([
+    fetchLeague(leagues.ucl,'Champions League'),
+    fetchLeague(leagues.caf,'Qualifications CAF'),
+    fetchLeague(leagues.wc,'Coupe du Monde'),
+    ...['epl','liga','bundes','seriea','ligue1'].map(k=>fetchLeague(leagues[k],'Grandes équipes'))
+  ]);
+  data.ucl=r[0].status==='fulfilled'?r[0].value:[];
+  data.caf=r[1].status==='fulfilled'?r[1].value:[];
+  data.wc=r[2].status==='fulfilled'?r[2].value:[];
+  const allFav=r.slice(3).flatMap(x=>x.status==='fulfilled'?x.value:[]);
+  data.favorites=allFav.filter(isFavorite);
+  data.gabon=data.caf.filter(isGabon);
+  const errors=r.filter(x=>x.status==='rejected').length;
+  applyFilter();
+  document.getElementById('favorites').innerHTML=favoriteNames.map(n=>`<div class="team"><b>${n}</b><span class="star">★</span></div>`).join('');
+  const now=new Date();
+  status.innerHTML=`Dernière mise à jour : <strong>${now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</strong>${errors?` · ${errors} source(s) indisponible(s)`:''}`;
+}
+document.querySelectorAll('.btn[data-filter]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.btn[data-filter]').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeFilter=b.dataset.filter;applyFilter()}));
+document.getElementById('search').addEventListener('input',applyFilter);
+document.getElementById('refresh').addEventListener('click',load);
+load();
+setInterval(load,60000);
+</script>
+</body>
+</html>
