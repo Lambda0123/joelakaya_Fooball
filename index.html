@@ -1,43 +1,41 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Football Match Tracker V4</title>
+<title>Football Match Tracker — Foot Mercato</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#14213d}
-header{background:#12499d;color:#fff;text-align:center;padding:24px}h1{margin:0;font-size:34px}.sub{margin-top:6px}
-.wrap{max-width:1250px;margin:20px auto;padding:0 15px}.bar,.card{background:#fff;border-radius:15px;box-shadow:0 4px 18px #00000012}
-.bar{padding:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
-.card{padding:16px}.wide{margin-top:16px}.card h2{font-size:19px;margin:0;border-bottom:2px solid #ddd;padding-bottom:10px}
-button{background:#12499d;color:#fff;border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}
-input{padding:10px;border:1px solid #c8d1df;border-radius:8px;min-width:360px}.info{color:#53627a;font-size:13px}
-.match{padding:12px 0;border-bottom:1px solid #e9edf2}.match:last-child{border-bottom:0}.date{font-size:12px;color:#667085}.teams{font-weight:700;margin:5px 0}.league{font-size:12px;color:#667085}.badge{display:inline-block;font-size:12px;border-radius:8px;padding:3px 7px;background:#e9eef7}.live{background:#ffd9d9;color:#a40000}.done{background:#dff5e6;color:#126b32}
-.error{margin-top:16px;background:#fff1dc;color:#704400;padding:12px;border-radius:10px}.empty{padding:14px 0;color:#667085}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#13203a}
+header{background:#12499d;color:#fff;text-align:center;padding:24px}h1{margin:0;font-size:32px}.sub{margin-top:6px}
+.wrap{max-width:1280px;margin:20px auto;padding:0 15px}.bar,.card{background:#fff;border-radius:15px;box-shadow:0 4px 18px #00000012}.bar{padding:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+button{background:#12499d;color:#fff;border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}input{padding:10px;border:1px solid #c8d1df;border-radius:8px;min-width:370px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}.card{padding:16px}.wide{margin-top:16px}.card h2{font-size:19px;margin:0;border-bottom:2px solid #ddd;padding-bottom:10px}
+.match{padding:12px 0;border-bottom:1px solid #e9edf2}.match:last-child{border:0}.date{font-size:12px;color:#667085}.teams{font-weight:700;margin:5px 0}.league{font-size:12px;color:#667085}.badge{display:inline-block;font-size:12px;border-radius:8px;padding:3px 7px;background:#e9eef7}
+.live{background:#ffd9d9;color:#a40000}.done{background:#dff5e6;color:#126b32}.empty{padding:14px 0;color:#667085}.error{margin-top:16px;background:#fff1dc;color:#704400;padding:12px;border-radius:10px}.info{font-size:13px;color:#53627a}
+.source{margin-top:16px}.source a{color:#12499d}
 @media(max-width:900px){.grid{grid-template-columns:1fr}input{min-width:230px}}
 </style></head>
 <body>
-<header><h1>⚽ Football Match Tracker</h1><div class="sub">CAF / CAN · Champions League · Coupe du Monde · Favoris</div></header>
+<header><h1>⚽ Football Match Tracker</h1><div class="sub">Données des matchs : Foot Mercato · CAF / CAN · Champions League · Coupe du Monde · Favoris</div></header>
 <div class="wrap">
-<div class="bar"><button onclick="load()">🔄 Actualiser maintenant</button><label>Favoris : <input id="fav" value="Gabon,France,Paris Saint-Germain,Barcelona,Germany,Spain"></label><span id="state" class="info">Connexion…</span></div>
+<div class="bar"><button onclick="load()">🔄 Actualiser maintenant</button><label>Favoris : <input id="fav" value="Gabon,France,Paris Saint-Germain,Barcelona,Germany,Spain"></label><span id="state" class="info">Connexion à Foot Mercato…</span></div>
 <div id="error"></div>
 <div class="grid"><section class="card"><h2>🌍 Prochains matchs CAF / CAN</h2><div id="caf"></div></section>
 <section class="card"><h2>🏆 Champions League</h2><div id="ucl"></div></section>
 <section class="card"><h2>🌎 Coupe du Monde</h2><div id="wc"></div></section></div>
 <section class="card wide"><h2>⭐ Prochains matchs des favoris</h2><div id="favorites"></div></section>
+<section class="card source"><h2>🌐 Source</h2><p>Les données sont récupérées depuis le livescore de Foot Mercato côté serveur.</p><p><a href="https://www.footmercato.net/live/" target="_blank">Ouvrir le Livescore Foot Mercato</a></p></section>
 </div>
 <script>
 let all=[];
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 const fmt=x=>new Date(x).toLocaleString("fr-FR",{dateStyle:"short",timeStyle:"short"});
 const keys=()=>document.getElementById("fav").value.split(",").map(x=>x.trim().toLowerCase()).filter(Boolean);
-function draw(list,id){let e=document.getElementById(id);if(!list.length){e.innerHTML='<div class="empty">Aucune rencontre trouvée.</div>';return}
-e.innerHTML=list.slice(0,30).map(m=>{let s=m.status||"À venir",live=/live|half|mi-temps/i.test(s),done=/ft|final|termin/i.test(s);
-return `<div class="match"><div class="date">${fmt(m.date)}</div><div class="teams">${esc(m.home)} — ${esc(m.away)}</div><div class="league">${esc(m.league)}</div>${m.hs!==""?`<b>${esc(m.hs)} - ${esc(m.as)}</b><br>`:""}<span class="badge ${live?"live":done?"done":""}">${esc(s)}</span></div>`}).join("")}
+function draw(list,id){const e=document.getElementById(id);if(!list.length){e.innerHTML='<div class="empty">Aucune rencontre trouvée.</div>';return}
+e.innerHTML=list.slice(0,50).map(m=>{const s=m.status||"À venir",live=/live|mi-temps|half/i.test(s),done=/termin|final|ft/i.test(s);
+return `<div class="match"><div class="date">${fmt(m.date)}</div><div class="teams">${esc(m.home)} — ${esc(m.away)}</div><div class="league">${esc(m.league||"Foot Mercato")}</div>${m.score?`<b>${esc(m.score)}</b><br>`:""}<span class="badge ${live?"live":done?"done":""}">${esc(s)}</span></div>`}).join("")}
 function fav(){draw(all.filter(m=>keys().some(k=>(m.home+" "+m.away).toLowerCase().includes(k))),"favorites")}
-async function load(){
-document.getElementById("state").textContent="Actualisation…";document.getElementById("error").innerHTML="";
-try{let r=await fetch("/data.json?x="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("Serveur local HTTP "+r.status);
-let d=await r.json();all=d.matches||[];draw(d.caf||[],"caf");draw(d.ucl||[],"ucl");draw(d.wc||[],"wc");fav();
-document.getElementById("state").textContent="Dernière actualisation : "+new Date().toLocaleTimeString("fr-FR");
-}catch(e){document.getElementById("error").innerHTML="⚠️ <b>Impossible de récupérer les matchs.</b><br>"+esc(e.message)+"<br><small>Ferme les anciennes fenêtres PowerShell puis relance la V4.</small>";document.getElementById("state").textContent="Erreur"}}
+async function load(){document.getElementById("state").textContent="Actualisation…";document.getElementById("error").innerHTML="";
+try{const r=await fetch("/footmercato-data?x="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("Serveur local HTTP "+r.status);
+const d=await r.json();all=d.matches||[];draw(d.caf||[],"caf");draw(d.ucl||[],"ucl");draw(d.wc||[],"wc");fav();
+document.getElementById("state").textContent="Dernière actualisation : "+new Date().toLocaleTimeString("fr-FR")}catch(e){document.getElementById("error").innerHTML="⚠️ <b>Impossible de récupérer les données Foot Mercato.</b><br>"+esc(e.message)+"<br><small>Vérifie que le serveur V5 est lancé et que l'ordinateur est connecté à Internet.</small>";document.getElementById("state").textContent="Erreur"}}
 const sf=localStorage.getItem("fm-fav");if(sf)document.getElementById("fav").value=sf;
 document.getElementById("fav").addEventListener("change",()=>{localStorage.setItem("fm-fav",document.getElementById("fav").value);fav()});
 load();setInterval(load,10*60*1000);

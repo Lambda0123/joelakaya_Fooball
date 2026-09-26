@@ -1,15 +1,17 @@
-V4 - CORRECTION DU HTTP 404
+V5 - SOURCE FOOT MERCATO
 
-Cette version utilise un NOUVEAU PORT (19877) et une nouvelle route /data.json.
-Cela evite les anciennes instances V2/V3 qui pouvaient repondre a la place du programme.
+Cette version utilise le livescore public de Foot Mercato comme source de donnees :
+https://www.footmercato.net/live/
 
-1. Fermer les anciennes fenetres PowerShell du Football Match Tracker.
+UTILISATION
+1. Fermer les anciennes versions du programme.
 2. Extraire ce ZIP.
-3. Double-cliquer sur Demarrer_Football_Match_Tracker_V4.bat
-4. Garder la fenetre PowerShell ouverte.
-5. Le navigateur s'ouvre sur la V4.
+3. Double-cliquer sur Demarrer_Football_Match_Tracker_FootMercato_V5.bat
+4. Laisser PowerShell ouvert.
+5. La page s'ouvre automatiquement.
 
-La V4 recupere jusqu'a 120 jours de calendrier pour les competitions CAF,
-UEFA et FIFA, ainsi que plusieurs grands championnats pour les favoris.
-
-Si Windows demande une autorisation pare-feu, autoriser PowerShell sur le reseau prive.
+IMPORTANT
+Le site Foot Mercato peut modifier sa structure HTML. Le parseur inclus est donc
+une solution pratique mais susceptible de nécessiter une adaptation si le site
+change sa présentation. La source reste Foot Mercato et un lien vers leur
+livescore est affiché dans l'application.
