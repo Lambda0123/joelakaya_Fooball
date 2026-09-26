@@ -1,0 +1,29 @@
+FOOTBALL MATCH TRACKER - VERSION 2
+=====================================
+
+Pourquoi cette version ?
+La première version interrogeait directement les API depuis index.html.
+Selon le navigateur et l'ouverture du fichier en file://, les requêtes peuvent
+être bloquées ou ne pas fonctionner correctement. Cette version utilise un
+petit serveur local PowerShell (inclus, aucune installation Python nécessaire).
+
+INSTALLATION
+1. Décompressez le ZIP.
+2. Double-cliquez sur Demarrer_Football_Tracker.bat.
+3. Une fenêtre PowerShell s'ouvre et le navigateur affiche automatiquement la page.
+4. Laissez la fenêtre PowerShell ouverte.
+5. Pour arrêter le programme, fermez la fenêtre PowerShell.
+
+DONNEES
+La version interroge les calendriers ESPN pour :
+- Qualifications CAN 2027
+- CAF Champions League
+- CAF Confederation Cup
+- UEFA Champions League
+- Coupe du Monde
+- Ligue 1
+- La Liga
+- Bundesliga
+- Premier League
+
+La page est actualisée automatiquement toutes les 10 minutes.
