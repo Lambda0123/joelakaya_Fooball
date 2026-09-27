@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Football Match Tracker</title>
+<style>
+body{margin:0;background:#07111f;color:#f5f7fb;font:15px Arial,sans-serif}header{padding:22px;background:#0b192a;border-bottom:1px solid #29415e;position:sticky;top:0}.wrap{max-width:1200px;margin:auto;padding:0 16px}h1{margin:0 0 6px}.muted{color:#9fb0c4}.bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}button,select{padding:9px 12px;border-radius:8px;border:1px solid #31506e;background:#10243a;color:white}main{padding:20px 0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:25px}.card{background:#0e1b2d;border:1px solid #213954;border-radius:12px;padding:13px}.comp{color:#79b8ef;font-size:12px;text-transform:uppercase}.date,.meta{color:#9fb0c4;font-size:12px;margin-top:5px}.teams{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin:14px 0;font-weight:bold}.away{text-align:right}.score{font-size:18px}.live{color:#ff6872}.empty{padding:16px;border:1px dashed #31506e;border-radius:10px;color:#9fb0c4;grid-column:1/-1}@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:550px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+<header><div class="wrap"><h1>⚽ Football Match Tracker</h1><div class="muted">🇬🇦 Gabon • CAF/CAN • Champions League • Coupe du Monde • Favoris</div>
+<div class="bar"><span id="status" class="muted">Chargement…</span><button onclick="load()">↻ Actualiser</button><select id="filter"><option value="all">Tous</option><option value="gabon">🇬🇦 Gabon</option><option value="caf">CAF / CAN</option><option value="ucl">Champions League</option><option value="world">Coupe du Monde</option><option value="fav">⭐ Favoris</option></select></div></div></header>
+<main class="wrap">
+<h2>Prochains matchs CAF / CAN</h2><div id="caf" class="grid"></div>
+<h2>Prochains matchs Champions League</h2><div id="ucl" class="grid"></div>
+<h2>Prochains matchs Coupe du Monde</h2><div id="world" class="grid"></div>
+<h2>⭐ Prochains matchs des favoris</h2><div id="fav" class="grid"></div>
+<h2>📋 Derniers résultats</h2><div id="results" class="grid"></div>
+</main>
+<script>
+let D={matches:[]};const favs=["gabon","paris saint-germain","psg","france","allemagne","espagne","barcelona","barcelone","barça","real madrid","marseille","lille"];
+const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fav=m=>favs.some(x=>((m.home||"")+" "+(m.away||"")).toLowerCase().includes(x));
+const gab=m=>((m.home||"")+" "+(m.away||"")).toLowerCase().includes("gabon");
+function date(x){let d=new Date(x);return isNaN(d)?"Date inconnue":new Intl.DateTimeFormat("fr-FR",{weekday:"short",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}).format(d)}
+function card(m){let s=m.homeScore!=null?`${m.homeScore} - ${m.awayScore}`:"—";return `<article class="card"><div class="comp">${esc(m.competition)}</div><div class="date">${esc(date(m.date))}</div><div class="teams"><div>${esc(m.home)}</div><div class="${m.status==="LIVE"?"score live":"score"}">${esc(s)}</div><div class="away">${esc(m.away)}</div></div><div class="meta">${m.status==="LIVE"?"🔴 EN DIRECT":esc(m.statusLabel||"À venir")}</div></article>`}
+function show(id,a,msg="Aucun match trouvé."){document.getElementById(id).innerHTML=a.length?a.map(card).join(""):`<div class="empty">${msg}</div>`}
+function render(){let m=D.matches||[],up=m.filter(x=>x.status==="UPCOMING"||x.status==="LIVE").sort((a,b)=>new Date(a.date)-new Date(b.date)),fin=m.filter(x=>x.status==="FINAL").sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,18),f=document.getElementById("filter").value;
+show("caf",up.filter(x=>x.category==="caf").slice(0,18));show("ucl",up.filter(x=>x.category==="ucl").slice(0,18));show("world",up.filter(x=>x.category==="world").slice(0,18));show("results",fin);
+let z=f==="gabon"?up.filter(gab):f==="fav"?up.filter(fav):f==="caf"?up.filter(x=>x.category==="caf"):f==="ucl"?up.filter(x=>x.category==="ucl"):f==="world"?up.filter(x=>x.category==="world"):up.filter(fav);show("fav",z.slice(0,24));}
+async function load(){try{let r=await fetch("./matches.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error(r.status);D=await r.json();document.getElementById("status").textContent=`${(D.matches||[]).length} matchs • mise à jour ${D.generatedAt?date(D.generatedAt):"—"}`;render()}catch(e){document.getElementById("status").textContent="Données indisponibles";["caf","ucl","world","fav","results"].forEach(x=>show(x,[],"Impossible de charger matches.json. Lance le workflow GitHub Actions."));console.error(e)}}document.getElementById("filter").onchange=render;load();setInterval(load,300000);
+</script></body></html>

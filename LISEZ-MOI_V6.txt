@@ -1,0 +1,26 @@
+FOOTBALL MATCH TRACKER V6 — GITHUB PAGES
+
+Cette version supprime totalement le serveur local PowerShell.
+Aucun localhost, aucun port 19876/19877/19878 et aucun serveur a lancer.
+
+Fichiers :
+- index.html
+- matches.json
+- scripts/update_matches.py
+- .github/workflows/update-matches.yml
+- .github/workflows/pages.yml
+
+INSTALLATION
+1. Decompresser le ZIP.
+2. Copier ces fichiers dans la racine de Lambda0123/joelakaya_Fooball.
+3. Dans GitHub : Settings > Pages > Build and deployment > Source > GitHub Actions.
+4. Dans Actions, lancer "Mettre a jour les matchs" avec Run workflow.
+5. Le site est ensuite accessible via l'adresse GitHub Pages de votre dépôt.
+
+Les donnees sont recuperees cote GitHub Actions puis ecrites dans matches.json. Le navigateur ne contacte donc pas directement l'API : cela evite les problemes CORS.
+
+Competitions configurees : CAF/CAN, CAF Champions League, CAF Confederation Cup, UEFA Champions League, Coupe du Monde, Ligue 1, LaLiga, Bundesliga, Premier League.
+
+IMPORTANT : la source actuelle est l'API publique ESPN. Elle est utilisee cote GitHub Actions pour privilegier la stabilite. Foot Mercato peut rester un lien/source de consultation, mais son contenu ne doit pas etre scrape directement depuis GitHub Pages sans verifier ses conditions d'utilisation.
+
+GitHub Actions peut executer un workflow programme a intervalles reguliers. Voir la documentation GitHub pour les horaires et GitHub Pages.

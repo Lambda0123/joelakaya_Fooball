@@ -1,0 +1,23 @@
+name: Mettre a jour les matchs
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+  push:
+    paths: ["scripts/update_matches.py",".github/workflows/update-matches.yml"]
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with: {python-version: "3.x"}
+      - run: python scripts/update_matches.py
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add matches.json
+          if git diff --cached --quiet; then echo "Aucun changement"; else git commit -m "Mise a jour automatique des matchs"; git push; fi
